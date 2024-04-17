@@ -34,6 +34,14 @@ class MyHomePage extends StatelessWidget {
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
                 color: Color.fromARGB(255, 44, 193, 219),
+                // Añadir contorno negro
+                shadows: [
+                  Shadow(
+                    color: Colors.black,
+                    offset: Offset(1, 1),
+                    blurRadius: 2,
+                  ),
+                ],
               ),
             ),
           ),
@@ -42,16 +50,18 @@ class MyHomePage extends StatelessWidget {
             icon: Icons.power_settings_new,
             state: 'No definida',
             availability: 'Disponible: 900g',
-            nextRound: 'Próxima ronda: Lun 🐱',
+            nextRound: 'Próxima ronda: Lun 🕒',
             thumbsUp: true,
+            iconSize: 60,
           ),
           SizedBox(height: 20),
           ServiceCard(
             icon: Icons.power_settings_new,
             state: 'Lun 8:40pm',
             availability: 'Disponible: 480g',
-            nextRound: 'Próxima ronda: 🕒',
+            nextRound: 'Próxima ronda: Lun 8:40🕒',
             thumbsUp: true,
+            iconSize: 60,
           ),
           SizedBox(height: 20),
           ServiceCard(
@@ -60,6 +70,7 @@ class MyHomePage extends StatelessWidget {
             availability: 'Disponible: 0g',
             nextRound: 'Próxima ronda: No definida',
             thumbsUp: false,
+            iconSize: 60,
           ),
         ],
       ),
@@ -73,6 +84,7 @@ class ServiceCard extends StatelessWidget {
   final String availability;
   final String nextRound;
   final bool thumbsUp;
+  final double iconSize;
 
   const ServiceCard({
     required this.icon,
@@ -80,10 +92,16 @@ class ServiceCard extends StatelessWidget {
     required this.availability,
     required this.nextRound,
     required this.thumbsUp,
+    this.iconSize = 40,
   });
 
   @override
   Widget build(BuildContext context) {
+    // Divide el texto de "Próxima ronda" en encabezado y horario
+    List<String> nextRoundParts = nextRound.split(': ');
+    String nextRoundHeader = nextRoundParts[0];
+    String nextRoundTime = nextRoundParts.length > 1 ? nextRoundParts[1] : '';
+
     return Card(
       elevation: 4,
       margin: EdgeInsets.symmetric(horizontal: 16),
@@ -92,24 +110,106 @@ class ServiceCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Modificación de la fila de disponibilidad para incluir el ícono y el texto del gato
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Icon(icon, color: Colors.blue),
-                Text(state),
+                Column(
+                  children: [
+                    Icon(icon, color: Colors.blue, size: iconSize),
+                    Text(
+                      state == 'No definida' ? 'Apagado' : 'Encendido',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.settings),
+                      onPressed: () {
+                        print('Configurando servicio...');
+                      },
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          'Disponible: ',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.black,
+                          ),
+                        ),
+                        Text(
+                          availability.split(': ')[1],
+                          style: TextStyle(
+                            fontSize: 22,
+                            color: Color.fromARGB(255, 63, 209, 148),
+                            fontWeight: FontWeight.bold,
+                            shadows: [
+                              Shadow(
+                                color: Colors.black,
+                                offset: Offset(1, 1),
+                                blurRadius: 2,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ],
             ),
             SizedBox(height: 8),
-            Text(availability),
-            SizedBox(height: 8),
-            Text(nextRound),
-            SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
+            // Separación de "Próxima ronda:" y horario
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(
-                  thumbsUp ? Icons.thumb_up : Icons.thumb_down,
-                  color: thumbsUp ? Colors.green : Colors.red,
+                Text(
+                  nextRoundHeader + ':',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.black,
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      nextRoundTime,
+                      style: TextStyle(
+                        fontSize: 22,
+                        color: Color.fromARGB(255, 63, 209, 148),
+                        fontWeight: FontWeight.bold,
+                        shadows: [
+                          Shadow(
+                            color: Colors.black,
+                            offset: Offset(1, 1),
+                            blurRadius: 2,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Text(
+                      '🐱 Gato',
+                      style: TextStyle(
+                        color: Colors.yellow,
+                        fontSize: 20,
+                        shadows: [
+                          Shadow(
+                            color: Colors.black,
+                            offset: Offset(1, 1),
+                            blurRadius: 2,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
